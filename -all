@@ -1,0 +1,16 @@
+/*Prototype for pixel_operation*/
+#ifndef PIXEL_H
+#define PIXEL_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL.h>
+
+typedef enum {NOTHING,WORKING} state_type;
+SDL_Surface *ecran, *image;
+int *height,*weight;
+
+int isSDLWorking();
+int setScreenSize(int *height,int *weight);
+int loadImage(SDL_Surface *image);
+#endif /*PIXEL_H*/
