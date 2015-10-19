@@ -12,9 +12,10 @@ int height,weight;
 
 int isSDLWorking();
 int setScreenSize(int height,int weight);
-int loadImage(SDL_Surface *image,char *image_name);
+SDL_Surface* loadImage(SDL_Surface *image,char *image_name);
 Uint32 getpixel(SDL_Surface *surface, unsigned x, unsigned y);
+void update_Screen(SDL_Surface *image);
 void putpixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
-int greyscale(SDL_Surface *img);
+SDL_Surface* greyscale(SDL_Surface *img);
 //SDL_Surface* display_image(SDL_Surface *img);
 #endif /*PIXEL_H*/

@@ -8,7 +8,7 @@
 /*Variable Déclaration*/
 int HEIGHT = 720;
 int WEIGHT = 480;
-SDL_Surface *image;
+
 /*Function declaration*/
 char* prompt_and_read(const char *prompt);
 void wait_for_keypressed(void);
@@ -17,15 +17,20 @@ int main()
 {
 	//Variables
 	char *image_name;
+  SDL_Surface *image = NULL;
+  int error = 0;
   // Init SDL
   isSDLWorking();
   setScreenSize(HEIGHT,WEIGHT);
   image_name = prompt_and_read("Enter a filename : ");
-  loadImage(image,image_name);
+  image = loadImage(image,image_name);
   //free(image_name);
   SDL_Delay(400);
-  greyscale(image);
-  void wait_for_keypressed();
+  image = greyscale(image);
+  update_Screen(image);
+  printf("%i\n", error );
+  SDL_Delay(400);
+  //void wait_for_keypressed();
   return 0;
 }
 
