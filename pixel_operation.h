@@ -17,5 +17,8 @@ Uint32 getpixel(SDL_Surface *surface, unsigned x, unsigned y);
 void update_Screen(SDL_Surface *image);
 void putpixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 SDL_Surface* greyscale(SDL_Surface *img);
+SDL_Surface* blackWhite(SDL_Surface *img);
+Uint32 getPixelSum(SDL_Surface *img,int x,int y);
+SDL_Surface* getPixelSumIt(SDL_Surface *img);
 //SDL_Surface* display_image(SDL_Surface *img);
 #endif /*PIXEL_H*/

@@ -28,6 +28,12 @@ int main()
   SDL_Delay(400);
   image = greyscale(image);
   update_Screen(image);
+  SDL_Delay(400);
+  image = getPixelSumIt(image);
+  update_Screen(image);
+  SDL_Delay(400);
+  image = blackWhite(image);
+  update_Screen(image);
   printf("%i\n", error );
   SDL_Delay(400);
   //void wait_for_keypressed();

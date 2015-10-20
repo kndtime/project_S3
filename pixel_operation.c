@@ -123,7 +123,7 @@ SDL_Surface* greyscale(SDL_Surface *img){
             Uint32 p = getpixel(img,i,j);
             SDL_GetRGB(p, img->format, &r,&g,&b);
             Uint32 v = 0.212671f * r + 0.715160f * g + 0.072169f * b;              
-            putpixel(img,i,j,SDL_MapRGB(img->format,v,v,v) );
+            putpixel(img,i,j,SDL_MapRGB(img->format,v,v,v));
     }
   }
       }else{
@@ -131,4 +131,58 @@ SDL_Surface* greyscale(SDL_Surface *img){
   }
   return img;
 }
+
+SDL_Surface* blackWhite(SDL_Surface *img){
+  Uint8 r,g,b;
+  for (int i = 0; i <= img->h; i++){
+    for (int j = 0; j < img->w; j++){
+      Uint32 p = getpixel(img,i,j);
+      SDL_GetRGB(p, img->format, &r,&g,&b);
+      if (r+g+b<(255/2))
+      {
+        putpixel(img,i,j,SDL_MapRGB(img->format,0,0,0));
+      }
+      else{
+        putpixel(img,i,j,SDL_MapRGB(img->format,255,255,255));
+      }
+    }
+  }
+  return img;
+}
+//Recursive
+Uint32 getPixelSum(SDL_Surface *img,int x,int y){
+  Uint8 r,g,b;
+  if ((img->h<x || img->h<y) || (x<0 || y<0) )
+  {
+    return 0;
+  }
+  Uint32 p = getpixel(img,x,y) + getPixelSum(img,x-1,y)+getPixelSum(img,x,y-1)- getPixelSum(img,x-1,y-1);
+  SDL_GetRGB(p, img->format, &r,&g,&b);
+  putpixel(img,x,y,SDL_MapRGB(img->format,r,g,b));
+  return p;
+}
+//Iterative
+SDL_Surface* getPixelSumIt(SDL_Surface *img){
+  Uint8 r,g,b;
+  Uint32 sum;
+  for (int i = 0; i < img->h ; ++i)
+  {
+    for (int j = 0; j  < img->w; ++j)
+    {
+      for (int m = i; m > 0; --m)
+      {
+        sum = 0;
+        for (int n = j; n > 0; --n)
+        {
+          sum += getpixel(img,m,n);
+        }
+      }
+      SDL_GetRGB(sum, img->format, &r,&g,&b);
+      putpixel(img,i,j,SDL_MapRGB(img->format,r,g,b));
+    }
+  }
+  return img;
+}
+
+
 
