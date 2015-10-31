@@ -186,11 +186,13 @@ SDL_Surface* getPixelSumIt(SDL_Surface *img){
 }
 
 SDL_Surface* setIntegralImage(SDL_Surface *img){
+ Uint32 p = 0;
     for (int i = 0; i < img->h; ++i)
     {
       for (int j = 0; j < img->w; ++j)
       {
-        putpixel(img,i,j,pixelImageIntegral(img,i,j));
+	p = pixelImageIntegral(img,i,j);
+        putpixel(img,i,j,SDL_MapRGB(img->format,p,p,p));
       }
     }
     return img;
@@ -219,5 +221,18 @@ SDL_Surface* setIntegralImage(SDL_Surface *img){
     return sum;
   }
 
+void IntegralImage(SDL_Surface *img,unsigned int **matrix){
+  int x,y;
 
+  matrix[1][1] = getpixel(img,0,0);
+  for(x=2;x < img ->h+1); x++)
+  tab[x][1] = tab[x-1][1] + getpixel(img , x-1,0);
+for(y=2 ; y < img -> w+1 ; y++)
+  unsigned int line = getpixel(img,0,y-1);
+  tab[1][y]= tab[1][y-1] + line;
+  line = 0;
+   for(x=1;x<img->h+1;x++)
+     line += getpixel(img,x-1,y-1);
+     tab[x][y] = tab [x][y-1] + line;
+}
 
