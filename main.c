@@ -29,14 +29,19 @@ int main()
   image = greyscale(image);
   update_Screen(image);
   SDL_Delay(400);
-  image = setIntegralImage(image);
-  update_Screen(image);
-  SDL_Delay(400);
   image = blackWhite(image);
   update_Screen(image);
-  printf("%i\n", error );
   SDL_Delay(400);
-  //void wait_for_keypressed();
+  //image = setIntegralImage(image);
+  image = TrueIntegralImage(image);
+  update_Screen(image);
+  SDL_Delay(400);
+  //image = GetIntegralImage(image, IntegralImage(image));
+  update_Screen(image);
+  SDL_Delay(1000);
+  update_Screen(image);
+  printf("%i\n", error );
+  void wait_for_keypressed();
   return 0;
 }
 

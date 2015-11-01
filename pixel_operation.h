@@ -24,5 +24,12 @@ SDL_Surface* getPixelSumIt(SDL_Surface *img);
 SDL_Surface* setIntegralImage(SDL_Surface *img);
 int pixelImageIntegral(SDL_Surface *img, int x, int y);
 int s(SDL_Surface *img,int x, int y);
+SDL_Surface* GetIntegralImage(SDL_Surface *img, unsigned int **matrix);
+unsigned int** IntegralImage(SDL_Surface *img);
+SDL_Surface* TrueIntegralImage(SDL_Surface *img);
+unsigned int getColSum(unsigned int **matrix, int i, int j);
+unsigned int getRowSum(unsigned int **matrix, int i, int j);
+unsigned int** build_matrix(int dimW,int dimH);
+void print_dynmat(unsigned int **mat, int dimW,int dimH);
 //SDL_Surface* display_image(SDL_Surface *img);
 #endif /*PIXEL_H*/

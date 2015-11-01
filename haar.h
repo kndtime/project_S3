@@ -12,11 +12,15 @@ typedef struct
 }Haar;
 
 
-int haar_features_a(int x,int y,int w ,unsigned int **matrix);
-int haar_features_b(int x,int y,int w ,unsigned int **matrix);
-int haar_features_c(int x,int y,int w ,unsigned int **matrix);
-int haar_features_d(int x,int y,int w ,unsigned int **matrix);
-int haar_features_e(int x,int y,int w ,unsigned int **matrix);
-int use_haar(); /*à faire*/
-
+unsigned long haar_rect(int x,int y , int h , int w,unsigned int **matrix);
+int haar_features_a(int x,int y,int h,int w,unsigned int **matrix);
+int haar_features_b(int x,int y,int h,int w,unsigned int **matrix);
+int haar_features_c(int x,int y,int h,int w,unsigned int **matrix);
+int haar_features_d(int x,int y,int h,int w,unsigned int **matrix);
+int haar_features_e(int x,int y,int h,int w,unsigned int **matrix);
+void use_haar(SDL_Surface *img,unsigned int **matrix); /*à faire*/
+void CascadeFeature();
+double getNegativeThreshold();
+double getPositiveThreshold();
+void initWeight(double *m, double *n);
 #endif /* HAAR_H */

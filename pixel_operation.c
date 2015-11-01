@@ -2,6 +2,7 @@
  * is mainly for pre processing algorithms*/
 #include "pixel_operation.h"
 
+int **matrix;
 
 int isSDLWorking(){
 if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -122,7 +123,8 @@ SDL_Surface* greyscale(SDL_Surface *img){
           for (int j = 0; j <= img->w; j++) {
             Uint32 p = getpixel(img,i,j);
             SDL_GetRGB(p, img->format, &r,&g,&b);
-            Uint32 v = 0.212671f * r + 0.715160f * g + 0.072169f * b;              
+            //Uint32 v = 0.212671f * r + 0.715160f * g + 0.072169f * b; 
+            Uint32 v = r+g+b/3;         
             putpixel(img,i,j,SDL_MapRGB(img->format,v,v,v));
     }
   }
@@ -221,18 +223,114 @@ SDL_Surface* setIntegralImage(SDL_Surface *img){
     return sum;
   }
 
-void IntegralImage(SDL_Surface *img,unsigned int **matrix){
+unsigned int** IntegralImage(SDL_Surface *img){
   int x,y;
-
-  matrix[1][1] = getpixel(img,0,0);
-  for(x=2;x < img ->h+1); x++)
-  tab[x][1] = tab[x-1][1] + getpixel(img , x-1,0);
-for(y=2 ; y < img -> w+1 ; y++)
-  unsigned int line = getpixel(img,0,y-1);
-  tab[1][y]= tab[1][y-1] + line;
-  line = 0;
-   for(x=1;x<img->h+1;x++)
+  unsigned int **tab =NULL;
+  tab[1][1] = getpixel(img,0,0);
+  for(x=2;x < (img->h+1); x++)
+  {
+    tab[x][1] = tab[x-1][1] + getpixel(img , x-1,0);
+  }
+  for(y=2 ; y < img -> w+1 ; y++){
+    unsigned int line = getpixel(img,0,y-1);
+    tab[1][y]= tab[1][y-1] + line;
+    line = 0;
+    for(x=1;x<img->h+1;x++){
      line += getpixel(img,x-1,y-1);
      tab[x][y] = tab [x][y-1] + line;
+    }
+  }
+  return tab;
 }
+
+ SDL_Surface* GetIntegralImage(SDL_Surface *img, unsigned int **matrix)
+ {
+   for (int i = 0; i < img->w; ++i)
+   {
+     for (int j = 0; i < img->h; ++i)
+     {
+       putpixel(img,i,j,matrix[i][j]);
+     }
+    }
+    return img;
+ }
+
+SDL_Surface* TrueIntegralImage(SDL_Surface *img)
+{
+  // Allocate S and ii matrices.
+    //unsigned int matrix[img->w][img->h];
+    unsigned int **matrix = build_matrix(img->w,img->h);
+    for (int i = 0; i < img->w; ++i)
+    {
+      for (int j = 0; j < img->h; ++j)
+      {
+        matrix[i][j] = getpixel(img,i,j); 
+      }
+    }
+
+    print_dynmat(matrix,img->w,img->h);
+
+    for (int j = 0; j < img->w; ++j){
+      for(int i = 1; i < img->h; ++i) {
+        matrix[i][j] = getColSum(matrix,i,j)+
+        getColSum(matrix,i-1,j);
+      }
+    }
+
+    for (int j = 0; j < img->w; ++j){
+      for(int i = 1; i < img->h; ++i) {
+        matrix[j][i] = getRowSum(matrix,i,j)+
+        getRowSum(matrix,i,j-1);
+      }
+    }
+    if(!matrix) { 
+        printf("%s\n", "WARNING: Integral image is null." );
+        return img;
+    }
+
+    for (int i = 0; i < img->w; ++i)
+    {
+      for (int j = 0; j < img->h; ++j)
+      {
+         putpixel(img,i,j,matrix[i][j]);
+      }
+    }
+    return img;
+}
+
+unsigned int** build_matrix(int dimW,int dimH) {
+  unsigned int         **mat;
+  mat = malloc(dimW * sizeof (int *));
+  for (int i = 0; i < dimH; ++i)
+    mat[i] = malloc(dimH * sizeof (int));
+  return mat;
+}
+
+void print_dynmat(unsigned int **mat, int dimW,int dimH) {
+  for (int i = 0; i < dimW; ++i) {
+    for (int j = 0; j < dimH; ++j)
+      printf("%02d ", mat[i][j]);
+    printf("\n");
+  }
+}
+
+
+unsigned int getColSum(unsigned int **matrix, int i, int j){
+  unsigned int count = 0;
+  for (int h = i; h > 0; --h)
+  {
+    count += matrix[h][j];
+  }
+  return count;
+}
+
+unsigned int getRowSum(unsigned int **matrix, int i, int j){
+  unsigned int count = 0;
+  for (int h = j; h > 0; --h)
+  {
+    count += matrix[h][i];
+  }
+  return count;
+}
+
 
