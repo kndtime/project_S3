@@ -31,4 +31,5 @@ void insert_faces(struct faces *f,char *fn,char*ln,nb y,nb neb,nb nm);
 struct faces *search_faces(struct faces *f,nb total);
 int del_faces(struct faces *f,char *fn,char *ln);
 int change_faces(struct faces *f,char *fn,char *ln,nb y,nb neb,nb nm);
+void ecriture(struct faces *f, FILE *file);
 #endif /*BDD_H*/

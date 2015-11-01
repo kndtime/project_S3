@@ -82,3 +82,25 @@ int modif_faces(struct faces *f, char *nom, char *prenom, nb eye, nb mouth, nb n
 	insert_faces(f, prenom, nom, eye, mouth, nez);
 	return b;
 }
+
+void ecriture(struct faces *f, FILE *file){
+	file = NULL;
+	file =	fopen("text.txt", "w");
+	if (file != NULL){
+		struct faces *t = f;
+		while(t != NULL){
+			struct caract *c = t->caract;
+			fprintf(file, "%u\n", t->total);
+			while(c != NULL){
+				fprintf(file,", %s\n ", c->fn);
+				fprintf(file,", %s\n ", c->ln);
+				fprintf(file,", %u\n ", c->eye);
+				fprintf(file,", %u\n ", c->bouche);
+				fprintf(file,", %u\n ", c->nez);
+				c=c->next;
+			}
+			t = t->next;
+		}
+		fclose(file);
+	}
+}
