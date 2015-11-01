@@ -13,12 +13,13 @@ typedef struct
 
 
 unsigned long haar_rect(int x,int y , int h , int w,unsigned int **matrix);
-int haar_features_a(int x,int y,int h,int w,unsigned int **matrix);
-int haar_features_b(int x,int y,int h,int w,unsigned int **matrix);
-int haar_features_c(int x,int y,int h,int w,unsigned int **matrix);
-int haar_features_d(int x,int y,int h,int w,unsigned int **matrix);
-int haar_features_e(int x,int y,int h,int w,unsigned int **matrix);
+int haar1(int x,int y,int h,int w,unsigned int **matrix);
+int haar2(int x,int y,int h,int w,unsigned int **matrix);
+int haar3(int x,int y,int h,int w,unsigned int **matrix);
+int haar4(int x,int y,int h,int w,unsigned int **matrix);
+int haar5(int x,int y,int h,int w,unsigned int **matrix);
 void use_haar(SDL_Surface *img,unsigned int **matrix); /*à faire*/
+long *MoveFeatures(int frameSize,unsigned int **tab);
 void CascadeFeature();
 double getNegativeThreshold();
 double getPositiveThreshold();

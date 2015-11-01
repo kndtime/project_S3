@@ -35,7 +35,8 @@ int main()
   //image = setIntegralImage(image);
   image = TrueIntegralImage(image);
   update_Screen(image);
-  SDL_Delay(400);
+  SDL_Delay(3000);
+  
   //image = GetIntegralImage(image, IntegralImage(image));
   update_Screen(image);
   SDL_Delay(1000);
