@@ -92,10 +92,10 @@ void ecriture(struct faces *f, FILE *file){
 			struct caract *c = t->caract;
 			fprintf(file, "%u\n", t->total);
 			while(c != NULL){
-				fprintf(file,", %s\n ", c->fn);
-				fprintf(file,", %s\n ", c->ln);
-				fprintf(file,", %u\n ", c->eye);
-				fprintf(file,", %u\n ", c->bouche);
+				fprintf(file,", %s ", c->fn);
+				fprintf(file,", %s\n", c->ln);
+				fprintf(file,", %u ", c->eye);
+				fprintf(file,", %u ", c->bouche);
 				fprintf(file,", %u\n ", c->nez);
 				c=c->next;
 			}
@@ -103,4 +103,15 @@ void ecriture(struct faces *f, FILE *file){
 		}
 		fclose(file);
 	}
+}
+
+void lecture(FILE *file){
+	file = NULL;
+	file = fopen("text.txt", "r");
+	int m = 1000;
+	char chaine[m];
+	while (fgets(chaine, m, file) != NULL){
+		printf("%s\n", chaine);
+	}
+	fclose(file);
 }
