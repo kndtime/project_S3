@@ -7,7 +7,7 @@ CFLAGS= -Wall -Wextra -Werror -std=c99 -O3
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl` -lSDL_image
  
-SRC= pixel_operation.c main.c
+SRC= pixel_operation.c main.c haar.c
 OBJ= ${SRC:.c=.o}
  
 all: main

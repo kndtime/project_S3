@@ -24,7 +24,7 @@ return 0;
 }
 
 SDL_Surface* loadImage(SDL_Surface *image,char *image_name){
-  image = SDL_LoadBMP(image_name);
+  image = IMG_Load(image_name);
     if ( image == NULL ){
               fprintf(stderr,
                   "Echec de chargement du fichier image.bmp : %s.\n",
@@ -151,14 +151,14 @@ SDL_Surface* blackWhite(SDL_Surface *img){
 }
 //Recursive
 Uint32 getPixelSum(SDL_Surface *img,int x,int y){
-  Uint8 r,g,b;
+  //Uint8 r,g,b;
   if ((img->h<x || img->h<y) || (x<0 || y<0) )
   {
     return 0;
   }
   Uint32 p = getpixel(img,x,y) + getPixelSum(img,x-1,y)+getPixelSum(img,x,y-1)- getPixelSum(img,x-1,y-1);
-  SDL_GetRGB(p, img->format, &r,&g,&b);
-  putpixel(img,x,y,SDL_MapRGB(img->format,r,g,b));
+  //SDL_GetRGB(p, img->format, &r,&g,&b);
+  putpixel(img,x,y,p);
   return p;
 }
 //Iterative
@@ -175,6 +175,7 @@ SDL_Surface* getPixelSumIt(SDL_Surface *img){
         for (int n = j; n > 0; --n)
         {
           sum += getpixel(img,m,n);
+          printf("%i\n", sum );
         }
       }
       SDL_GetRGB(sum, img->format, &r,&g,&b);
@@ -184,5 +185,54 @@ SDL_Surface* getPixelSumIt(SDL_Surface *img){
   return img;
 }
 
+SDL_Surface* setIntegralImage(SDL_Surface *img){
+ Uint32 p = 0;
+    for (int i = 0; i < img->h; ++i)
+    {
+      for (int j = 0; j < img->w; ++j)
+      {
+	p = pixelImageIntegral(img,i,j);
+        putpixel(img,i,j,SDL_MapRGB(img->format,p,p,p));
+      }
+    }
+    return img;
+  }
 
+  int pixelImageIntegral(SDL_Surface *img, int x, int y){
+
+    int p =  getpixel(img,x,y) + s(img,x-1,y)+ s(img,x,y-1) - s(img,x-1,y-1);
+    //printf("%i\n", p );
+    if (p<0)
+    {
+      return 0;
+    }
+    return p;
+  }
+
+  int s(SDL_Surface *img,int x, int y){
+    int sum = 0;
+    for (int i = x; i > 0 ;--i)
+    {
+      for (int j = y; j > 0; --j)
+      {
+        sum += getpixel(img,i,j);
+      }
+    }
+    return sum;
+  }
+
+void IntegralImage(SDL_Surface *img,unsigned int **matrix){
+  int x,y;
+
+  matrix[1][1] = getpixel(img,0,0);
+  for(x=2;x < img ->h+1); x++)
+  tab[x][1] = tab[x-1][1] + getpixel(img , x-1,0);
+for(y=2 ; y < img -> w+1 ; y++)
+  unsigned int line = getpixel(img,0,y-1);
+  tab[1][y]= tab[1][y-1] + line;
+  line = 0;
+   for(x=1;x<img->h+1;x++)
+     line += getpixel(img,x-1,y-1);
+     tab[x][y] = tab [x][y-1] + line;
+}
 

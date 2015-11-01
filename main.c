@@ -29,7 +29,7 @@ int main()
   image = greyscale(image);
   update_Screen(image);
   SDL_Delay(400);
-  image = getPixelSumIt(image);
+  image = setIntegralImage(image);
   update_Screen(image);
   SDL_Delay(400);
   image = blackWhite(image);
