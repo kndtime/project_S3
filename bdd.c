@@ -1,14 +1,18 @@
 #include <mysql/mysql.h>
+#include <my_global.h>
+#include <string.h>
 #include "bdd.h"
 
 int main (){
- struct faces* f = init_faces();
- struct caract* c= NULL;
+ struct faces* f = init_faces(37);
+ struct caract* c = malloc(sizeof(struct caract));
  ins_carac(c,"Jacques","Jean",  11, 14,  12);
  f->caract = c;
  create_database();
  ajout(f);
  select_face(f);
+ free(c);
+ free(f);
  return 0;
 }
 
@@ -48,7 +52,7 @@ int create_database()
       exit(1);
   }
 
-  if (mysql_real_connect(con, "localhost", "root", "root_pswd", 
+  if (mysql_real_connect(con, "localhost", "root", "kenshin", 
           NULL, 0, NULL, 0) == NULL) 
   {
       fprintf(stderr, "%s\n", mysql_error(con));
@@ -56,7 +60,7 @@ int create_database()
       exit(1);
   }  
 
-  if (mysql_query(con, "CREATE DATABASE facedb")) 
+  if (mysql_query(con, "CREATE DATABASE IF NOT EXISTS facedb")) 
   {
       fprintf(stderr, "%s\n", mysql_error(con));
       mysql_close(con);
@@ -64,7 +68,7 @@ int create_database()
   }
 
   mysql_close(con);
-  exit(0);
+  return 1;
 }
 
 
@@ -76,7 +80,7 @@ void finish_with_error(MYSQL *con)
 }
 
 int ajout (struct faces* f)
-{
+{ printf("coucou");
   MYSQL *con = mysql_init(NULL);
   
   if (con == NULL) 
@@ -85,36 +89,31 @@ int ajout (struct faces* f)
       exit(1);
   }  
 
-  if (mysql_real_connect(con, "localhost", "user12", "34klq*", "facedb", 0, NULL, 0) == NULL) 
+  if (mysql_real_connect(con, "localhost", "root", "kenshin", "facedb", 0, NULL, 0) == NULL) 
   {
       finish_with_error(con);
   }    
   
-  if (mysql_query(con, "DROP TABLE IF EXISTS Visage")) {
+  /*if (mysql_query(con, "DROP TABLE IF EXISTS Visage")) {
       finish_with_error(con);
-  }
+  }*/
   
-  if (mysql_query(con, "CREATE TABLE Visage(Name TEXT, Lastname TEXT, Nose INT, Mouth INT, Eyes INT, Total INT)")) {      
+  if (mysql_query(con, "CREATE TABLE IF NOT EXISTS Visage(Name TEXT, Lastname TEXT, Nose INT, Mouth INT, Eyes INT, Total INT)")) {      
       finish_with_error(con);
   }
   
   while (f != NULL){
 	struct caract* c  = f->caract;
-	if (search_face(f,c->fn,c->ln) == 0){
-  		if (mysql_query(con, "INSERT INTO Visage VALUES(c->fn, c->ln, c->nose, c->mouth, c->eyes, f->total)")) {
+	char s[1000];
+
+		sprintf(s, "INSERT INTO Visage VALUES('%s' , '%s' , %d, %d, %d, %d);",  c->fn, c->ln, c->nose, c->mouth, c->eye, f->total);
+	printf("%s",s);
+  	if (mysql_query(con, s)) 
       	    		finish_with_error(con);
-			f=f->next;
-  		}	
+   	f= f->next;
 	}
-	else {
-		 if (mysql_query(con, "UPDATE Visage SET Mouth = c->mouth, SET Nose = c->nose, SET Eyes = c->eyes, SET Total = c->total WHERE Lastname = c->ln ")){
-			finish_with_error(con);		
-		 }
-	}
-   }		
-   
  	mysql_close(con);
-  	exit(0);
+  	return (1);
 }
 
 int select_face  (struct faces* f){ 
@@ -129,7 +128,7 @@ int select_face  (struct faces* f){
       exit(1);
   }  
   
-  if (mysql_real_connect(con, "localhost", "user12", "34klq*", 
+  if (mysql_real_connect(con, "localhost", "root", "kenshin", 
           "facedb", 0, NULL, CLIENT_MULTI_STATEMENTS) == NULL) 
   {
       finish_with_error(con);
@@ -163,7 +162,7 @@ int select_face  (struct faces* f){
   } while(status == 0);
     
   mysql_close(con);  
-  exit(0);
+  return(1);
 }
 
 

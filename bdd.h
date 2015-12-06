@@ -1,7 +1,7 @@
 #ifndef BDD_H
 #define BDD_H
 #define nb \
-  unsigned int
+  int
 
 #include <mysql/mysql.h>
 
