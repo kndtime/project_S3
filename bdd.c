@@ -4,34 +4,31 @@
 #include "bdd.h"
 
 int main (){
- struct faces* f = init_faces(37);
- struct caract* c = malloc(sizeof(struct caract));
- ins_carac(c,"Jacques","Jean",  11, 14,  12);
- f->caract = c;
+ struct faces* f = malloc(sizeof(struct faces));
+ f = init_faces("Jacques","Jean",  11, 14,  12);
+ struct faces* g = malloc(sizeof(struct faces));
+ g = init_faces("Martin","Dupont",  11, 14,  12);
+ f->next = g;
  create_database();
- ajout(f);
- select_face(f);
- free(c);
+ modification(g);
+ select_face(g);
  free(f);
+ free(g);
  return 0;
 }
 
 
 
-struct faces *init_faces(nb total){
+struct faces *init_faces(char *fn, char *ln, nb eye, nb mouth , nb nose){
 	struct faces *f = malloc(sizeof(struct faces));
-	f->total = total;
-	f->caract = NULL;
+	f->ln = ln;
+        f->fn = fn;
+        f->eye = eye;
+        f->nose = nose;
+        f->mouth = mouth;
+	f->total = mouth + eye + nose;
 	f->next = NULL;
 	return f;
-}
-
-void ins_carac(struct caract *c, char *fn, char *ln, nb eye, nb mouth , nb nose){
-	c->ln = ln;
-	c->fn = fn;
-	c->eye = eye;
-	c->nose = nose;
-	c->mouth = mouth;
 }
 
 
@@ -80,7 +77,7 @@ void finish_with_error(MYSQL *con)
 }
 
 int ajout (struct faces* f)
-{ printf("coucou");
+{ 
   MYSQL *con = mysql_init(NULL);
   
   if (con == NULL) 
@@ -103,11 +100,10 @@ int ajout (struct faces* f)
   }
   
   while (f != NULL){
-	struct caract* c  = f->caract;
 	char s[1000];
 
-		sprintf(s, "INSERT INTO Visage VALUES('%s' , '%s' , %d, %d, %d, %d);",  c->fn, c->ln, c->nose, c->mouth, c->eye, f->total);
-	printf("%s",s);
+	sprintf(s, "INSERT INTO Visage VALUES('%s' , '%s' , %d, %d, %d, %d);",  f->fn, f->ln, f->nose, f->mouth, f->eye, f->total);
+	printf("%s\n",s);
   	if (mysql_query(con, s)) 
       	    		finish_with_error(con);
    	f= f->next;
@@ -118,23 +114,24 @@ int ajout (struct faces* f)
 
 int select_face  (struct faces* f){ 
   int status = 0; 
-  struct caract* c  = f->caract;
-  f->caract = c;
+ 
   MYSQL *con = mysql_init(NULL);  
   
+  char s[1000];
+
+  sprintf(s, "SELECT Name, Lastname FROM Visage WHERE Total =%d;",  f->total);
   if (con == NULL)
   {
       fprintf(stderr, "mysql_init() failed\n");
       exit(1);
   }  
   
-  if (mysql_real_connect(con, "localhost", "root", "kenshin", 
-          "facedb", 0, NULL, CLIENT_MULTI_STATEMENTS) == NULL) 
+  if (mysql_real_connect(con, "localhost", "root", "kenshin", "facedb", 0, NULL, CLIENT_MULTI_STATEMENTS) == NULL) 
   {
       finish_with_error(con);
   }    
   
-  if (mysql_query(con, "SELECT Name FROM Visage WHERE Lastname = c->ln, Name = c->fn")) 
+  if (mysql_query(con, s)) 
   {
       finish_with_error(con);
   }
@@ -149,7 +146,7 @@ int select_face  (struct faces* f){
             
       MYSQL_ROW row = mysql_fetch_row(result);
       
-      printf("%s\n", row[0]);
+      printf("%s %s\n", row[0],row[1]);
       
       mysql_free_result(result);
                  
@@ -164,21 +161,67 @@ int select_face  (struct faces* f){
   mysql_close(con);  
   return(1);
 }
+	
+int suppression(struct faces *f){
 
+  MYSQL *con = mysql_init(NULL);
 
+  char s[1000];
 
+  sprintf(s, "DELETE FROM Visage WHERE NAME ='%s' && Lastname = '%s' ;",  f->fn , f->ln);
+  if (con == NULL)
+  {
+      fprintf(stderr, "mysql_init() failed\n");
+      exit(1);
+  }
 
+  if (mysql_real_connect(con, "localhost", "root", "kenshin", "facedb", 0, NULL, CLIENT_MULTI_STATEMENTS) == NULL)
+  {
+      finish_with_error(con);
+  }
 
+  if (mysql_query(con, s))
+  {
+      finish_with_error(con);
+  }
 
+  mysql_close(con);
+  return (1);
 
+}
 
+int modification(struct faces *f){
+
+MYSQL *con = mysql_init(NULL);
+  
+  char s[1000];
+
+  sprintf(s, "UPDATE Visage SET Nose = %d, Mouth = %d, Eyes = %d, Total = %d WHERE Name ='%s' && Lastname = '%s' ;",  f->nose , f->mouth , f->eye, f->total, f->fn, f->ln);
+  if (con == NULL)
+  {
+      fprintf(stderr, "mysql_init() failed\n");
+      exit(1);
+  }
+
+  if (mysql_real_connect(con, "localhost", "root", "kenshin", "facedb", 0, NULL, CLIENT_MULTI_STATEMENTS) == NULL)
+  {
+      finish_with_error(con);
+  }
+
+  if (mysql_query(con, s))
+  {
+      finish_with_error(con);
+  }
+
+  mysql_close(con);
+  return (1);
+}
 
 int search_face(struct faces *f, char* name, char* lastname){
-	struct caract* c = f->caract;
-	while (f != NULL && (c->fn != name && c->ln !=lastname))
+	
+	while (f != NULL && (f->fn != name && f->ln !=lastname))
 	{
 		f = f->next;
-		c = f->caract;
 	}
 	if (f!=NULL)
 		return 1;
